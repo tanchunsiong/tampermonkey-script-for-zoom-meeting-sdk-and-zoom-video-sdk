@@ -1,0 +1,63 @@
+// ==UserScript==
+// @name         Meeting SDK Web
+// @namespace    http://yournamespace.com
+// @version      0.1
+// @description  Inject HTML, external JS, inline JS, and invoke methods using buttons
+// @match        https://msdk.purejs.asdc.cc/index-latest.html*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    function injectScript(code) {
+        var script = document.createElement('script');
+        script.textContent = code;
+        document.body.appendChild(script);
+    }
+
+    function onClickExecuteScript(scriptCode) {
+        return function() {
+            injectScript(scriptCode);
+        };
+    }
+
+    function createButton(label, scriptCode) {
+        var button = document.createElement('button');
+        button.textContent = label;
+        button.style.backgroundColor = '#007bff'; // Background color
+        button.style.color = 'white'; // Text color
+        button.style.border = 'none'; // Remove border
+        button.style.padding = '5px 10px'; // Add padding
+        button.addEventListener('click', onClickExecuteScript(scriptCode));
+        return button;
+    }
+
+    // Create the buttons container and add it to the top of the page
+    var buttonsContainer = document.createElement('div');
+    buttonsContainer.style.position = 'fixed';
+    buttonsContainer.style.top = '10px';
+    buttonsContainer.style.left = '10px';
+
+    // Create the "Leave Meeting" button
+    var leaveButton = createButton('Leave Meeting', 'ZoomMtg.leaveMeeting({ confirm: false });');
+    buttonsContainer.appendChild(leaveButton);
+
+    // Create the "Mute Participant" button
+    var muteButton = createButton('Mute Participant', 'ZoomMtg.mute({ mute: true, userId: 0 });'); // Set user ID to 0
+    buttonsContainer.appendChild(muteButton);
+
+    // Create the "Start Media Capture" button
+    var startCaptureButton = createButton('Start Media Capture', 'ZoomMtg.mediaCapture({ record: "start" });');
+    buttonsContainer.appendChild(startCaptureButton);
+
+    // Create the "Stop Media Capture" button
+    var stopCaptureButton = createButton('Stop Media Capture', 'ZoomMtg.mediaCapture({ record: "stop" });');
+    buttonsContainer.appendChild(stopCaptureButton);
+
+    var endButton = createButton('End Meeting', 'ZoomMtg.endMeeting();');
+    buttonsContainer.appendChild(endButton);
+
+    // Add the buttons container to the page
+    document.body.appendChild(buttonsContainer);
+})();
