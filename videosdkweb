@@ -1,0 +1,83 @@
+// ==UserScript==
+// @name         Video SDK Web
+// @namespace    http://yournamespace.com
+// @version      0.1
+// @description  Inject HTML, external JS, inline JS, and invoke methods using buttons
+// @match        https://vsdk.asdc.cc/index.html*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    function injectScript(code) {
+        var script = document.createElement('script');
+        script.textContent = code;
+        document.body.appendChild(script);
+    }
+
+    function onClickExecuteScript(scriptCode) {
+        return function() {
+            injectScript(scriptCode);
+        };
+    }
+
+    function createButton(label, scriptCode) {
+        var button = document.createElement('button');
+        button.textContent = label;
+        button.style.backgroundColor = '#007bff'; // Background color
+        button.style.color = 'white'; // Text color
+        button.style.border = 'none'; // Remove border
+        button.style.padding = '5px 10px'; // Add padding
+          button.title = scriptCode; // Set the tooltip
+        button.addEventListener('click', onClickExecuteScript(scriptCode));
+        return button;
+    }
+
+    // Create the buttons container and add it to the top of the page
+    var buttonsContainer = document.createElement('div');
+    buttonsContainer.style.position = 'fixed';
+    buttonsContainer.style.top = '10px';
+    buttonsContainer.style.left = '10px';
+
+    // Create the "Leave Meeting" button
+    //var leaveButton = createButton('Leave Meeting', 'ZoomMtg.leaveMeeting({ confirm: false });');
+    //buttonsContainer.appendChild(leaveButton);
+
+    // Create the "Mute Participant" button
+    var muteButton = createButton('Mute Audio', 'zmClient.getMediaStream().muteAudio()'); // Set user ID to 0
+    buttonsContainer.appendChild(muteButton);
+
+        // Create the "Mute Participant" button
+    var unmuteButton = createButton('unMute Audio', 'zmClient.getMediaStream().unmuteAudio()'); // Set user ID to 0
+    buttonsContainer.appendChild(unmuteButton);
+
+    // Create the "Start Media Capture" button
+    //var startCaptureButton = createButton('Start Media Capture', 'ZoomMtg.mediaCapture({ record: "start" });');
+    //buttonsContainer.appendChild(startCaptureButton);
+
+    // Create the "Stop Media Capture" button
+    //var stopCaptureButton = createButton('Stop Media Capture', 'ZoomMtg.mediaCapture({ record: "stop" });');
+    //buttonsContainer.appendChild(stopCaptureButton);
+
+    //var endButton = createButton('End Meeting', 'ZoomMtg.endMeeting();');
+    //buttonsContainer.appendChild(endButton);
+
+    // Create the "Check Feature Requirements" button
+    var checkRequirementsButton = createButton('Check Feature Requirements', 'alert(JSON.stringify(VideoSDK.checkFeatureRequirements()))');
+    buttonsContainer.appendChild(checkRequirementsButton);
+
+      // Create the "Check Feature Requirements" button
+    var checksystemRequirementsButton = createButton('Check System Requirements', 'alert(JSON.stringify(VideoSDK.checkSystemRequirements()))');
+    buttonsContainer.appendChild(checksystemRequirementsButton);
+
+      // Create the "Check Feature Requirements" button
+    var getDevicesButton = createButton('Get all devices', 'VideoSDK.getDevices().then(devices => {alert(JSON.stringify(devices));}).catch(e => {})');
+    buttonsContainer.appendChild(getDevicesButton);
+
+
+
+
+    // Add the buttons container to the page
+    document.body.appendChild(buttonsContainer);
+})();
